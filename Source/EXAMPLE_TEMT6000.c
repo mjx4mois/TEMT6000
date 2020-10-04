@@ -6,9 +6,6 @@
      Create Date	: 2017/12/31
 ---------------------------------------------------------------------- */
 
-#ifndef __TEMT6000_EXAMPLE__
-#define __TEMT6000_EXAMPLE__
-
 #include <mega32a.h>
 #include <stdio.h>
 #include <delay.h>
@@ -75,4 +72,3 @@ void EXAMPLE_TEMT6000(void)
 		printf("--------------------  Ambinet Light sensor TEMT6000 --------------------\r\n");
 		
 }
-#endif		//#ifndef __TEMT6000_EXAMPLE__

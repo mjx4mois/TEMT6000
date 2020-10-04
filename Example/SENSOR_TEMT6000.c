@@ -5,22 +5,19 @@
      Function		: SENSOR_TEMT6000
      Create Date	: 2017/12/31
 ---------------------------------------------------------------------- */
-#ifndef __TEMT6000_FUNCTION__
-#define __TEMT6000_FUNCTION__  
 
 
 #include <stdio.h>
 #include <math.h>
 #include <delay.h>
-
 #include "SENSOR_TEMT6000.h"
 
-#define TEMT6000_DEBUG		0
+#define TEMT6000_DEBUG			(0)
 
 /* read adc_data[0] -> ADC channel 0 -> PA_ 2 pin */
 extern unsigned int	adc_data[1];
 
-//********************************************* SYSTEM *************************************************
+/********************************************** SYSTEM **************************************************/
 /*--------------------------------------------------------------------------------------------------*/
 /* read adc value & return ADC value ; note : adc -> 5V*/
 void TEMT6000_GET_RAW_DATA(FLOAT *raw_data)
@@ -70,48 +67,48 @@ void TEMT6000_GET_LX_VALUE(FLOAT raw_data,FLOAT *lx_data)
 	FLOAT get_data=0.0,temp_data=0.0;
 	FLOAT get_ua=0;
 	
-	/* Step 1: */
-	/* 1000000 -> 10^6 ; raw_data -> vlotage ; (10*1000) -> 10K Ohm */
-	get_ua =  1000000* raw_data / (10*1000);	/* note :  10*1000 -> 10k ohm  ; I = V / R    ; *1000000 -> unit : uA */
-	
-	/* Step 2: */
-	/* Fig. 3 - Photo Current vs. Illuminance */
-	/* Get A point & B point to calculate m & y-y0 =m(x -x0) function */
-	/* A(log10,log5.1) = (1 ,0.7)  ;  B(log1000,log500)=(3, 2.6) */
-	/* m = dy/dx = (2.6-0.7)/(3-1)=(1.9/2) = 0.95 */
-	/* y0=0.7 , x0=1 -> y-0.7 = 0.95*( x - 1) */
+		/* Step 1: */
+		/* 1000000 -> 10^6 ; raw_data -> vlotage ; (10*1000) -> 10K Ohm */
+		get_ua =  1000000* raw_data / (10*1000);	/* note :  10*1000 -> 10k ohm  ; I = V / R    ; *1000000 -> unit : uA */
+		
+		/* Step 2: */
+		/* Fig. 3 - Photo Current vs. Illuminance */
+		/* Get A point & B point to calculate m & y-y0 =m(x -x0) function */
+		/* A(log10,log5.1) = (1 ,0.7)  ;  B(log1000,log500)=(3, 2.6) */
+		/* m = dy/dx = (2.6-0.7)/(3-1)=(1.9/2) = 0.95 */
+		/* y0=0.7 , x0=1 -> y-0.7 = 0.95*( x - 1) */
 
-	/* for example 1*/
-	/* if get_ua = 110 -> log(110) = 2.0413  -> get the formula : 2.0413-0.7 = 0.95x - 0.95 */
-	/* x = (2.0413-0.7 + 0.95) / 0.95 , the x result : 2.411 */
-	/* turn the x in log -> 10^2.411  = 257 lux */
+		/* for example 1*/
+		/* if get_ua = 110 -> log(110) = 2.0413  -> get the formula : 2.0413-0.7 = 0.95x - 0.95 */
+		/* x = (2.0413-0.7 + 0.95) / 0.95 , the x result : 2.411 */
+		/* turn the x in log -> 10^2.411  = 257 lux */
 
-	/* for example 2*/
-	/* if get_ua = 200 -> log(200) = 2.3010  -> get the formula : 2.3010 -0.7 = 0.95x - 0.95 */
-	/* x = (2.3010-0.7 + 0.95) / 0.95 , the x result : 2.68529 */
-	/* turn the x in log -> 10^2.68529  = 484 lux */
-	
-	/* for example 3*/
-	/* if get_ua = 20 -> log(20) = 1.3010  -> get the formula :1.3010-0.7 = 0.95x - 0.95 */
-	/* x = (1.3010-0.7 + 0.95) / 0.95 , the x result : 1.6326 */
-	/* turn the x in log -> 10^1.6326  = 42.9 lux */
+		/* for example 2*/
+		/* if get_ua = 200 -> log(200) = 2.3010  -> get the formula : 2.3010 -0.7 = 0.95x - 0.95 */
+		/* x = (2.3010-0.7 + 0.95) / 0.95 , the x result : 2.68529 */
+		/* turn the x in log -> 10^2.68529  = 484 lux */
+		
+		/* for example 3*/
+		/* if get_ua = 20 -> log(20) = 1.3010  -> get the formula :1.3010-0.7 = 0.95x - 0.95 */
+		/* x = (1.3010-0.7 + 0.95) / 0.95 , the x result : 1.6326 */
+		/* turn the x in log -> 10^1.6326  = 42.9 lux */
 
-	/* for example 4*/
-	/* if get_ua = 300 -> log(300) = 2.4771 -> get the formula : 2.4771-0.7 = 0.95x - 0.95 */
-	/* x = (2.4771-0.7 + 0.95) / 0.95 , the x result : 2.8706 */
-	/* turn the x in log -> 10^2.8706  = 742.33 lux */
+		/* for example 4*/
+		/* if get_ua = 300 -> log(300) = 2.4771 -> get the formula : 2.4771-0.7 = 0.95x - 0.95 */
+		/* x = (2.4771-0.7 + 0.95) / 0.95 , the x result : 2.8706 */
+		/* turn the x in log -> 10^2.8706  = 742.33 lux */
 
-	get_data = ((FLOAT)log(get_ua) - 0.7 + 0.95) /0.95 ; /* x = (log(get_ua) -0.7 +0.95) / 0.95 */
+		get_data = ((FLOAT)log(get_ua) - 0.7 + 0.95) /0.95 ; /* x = (log(get_ua) -0.7 +0.95) / 0.95 */
 
-	/* final bese 10^(get_data) */
-	final_data = pow(10.0, get_data);		/* get the final lux form sepc Fig. 3 - Photo Current vs. Illuminance */
+		/* final bese 10^(get_data) */
+		final_data = pow(10.0, get_data);		/* get the final lux form sepc Fig. 3 - Photo Current vs. Illuminance */
 
-	#if TEMT6000_DEBUG	/* FOR DEBUG */
-	printf("final_data= %f lx\r\n",final_data);	
-	#endif		
-	
-	*lx_data =  final_data ;
+		#if TEMT6000_DEBUG	/* FOR DEBUG */
+		printf("final_data= %f lx\r\n",final_data);	
+		#endif		
+		
+		*lx_data =  final_data ;
 }
 /*--------------------------------------------------------------------------------------------------*/
-//********************************************* SYSTEM *************************************************
-#endif //#ifndef __TEMT6000_FUNCTION__ 
+/********************************************** SYSTEM **************************************************/
+ 
